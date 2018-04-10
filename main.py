@@ -35,39 +35,36 @@ def fillbins(bins, data):
     bin_count = [0]*len(bins)
     for i in range(len(data)):
         for j in range(len(bins)-1):
-
-            if(data[i] > bins[j] and data[i] <= bins[j+1]):
-                print(str(i)+ " " + str(data[i]) + ' goes into '+ str(bins[j]))
+            if(data[i] >= bins[j] and data[i] < bins[j+1]):
+                print(str(i)+ " " + str(data[i]) + ' goes into '+ str(bins[j]) +"-"+str(bins[j+1]))
                 bin_count[j] += 1
-            elif(j == (len(bins)-2) and data[i] > bins[j+1]):
-                print(str(i)+ " " + str(data[i]) + ' goes into '+ str(bins[j+1]))
-                bin_count[j+1] += 1
+
     return bin_count
 
 #implementation of histograms
 def histogram(numbins, data, feature_name, class_name ):
     hismax = np.amax(data)
     hismin = np.amin(data)
-    bin_width = float((hismax - hismin)/numbins)
+    bin_width = round((hismax - hismin)/float(numbins),3)
     bins = [hismin]
     r1 = hismin
     r2 = hismin + bin_width
-    string = str(round(r1,3))+"-"+str(round(r2,3))
     X = []
-    X.append(string)
 
-    for i in range(1,numbins):
-        bins.append(bins[i-1] + bin_width)
-        r1 = r2
-        r2 = r2 + bin_width
+    for i in range(1,numbins+1):
         string = str(round(r1,3))+"-"+str(round(r2,3))
         X.append(string)
+        bins.append(round(bins[i-1] + bin_width,3))
+        r1 = r2
+        r2 = r2 + bin_width
+
 
     print(X)
     print(data)
     inds = np.arange(len(bins))
     bin_height= fillbins(bins, data)
     plt.bar(inds,bin_height,bin_width + .5, color = 'lightcoral', edgecolor = 'black')
+    #plt.hist( data, bins,width = .2, color = 'lightcoral', edgecolor = 'black')
     plt.xlabel('Feature Distribution')
     plt.ylabel(feature_name)
     plt.title('Distribution for '+ feature_name + ' in '+ class_name)
