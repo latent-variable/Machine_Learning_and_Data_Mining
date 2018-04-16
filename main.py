@@ -1,7 +1,15 @@
+#######################################
+#Lino Valdovinos
+#UCR Cs-171 Machine Learning and Data Science
+#Assignment 1
+
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 
+#Begin of Question(0)
 #read the wine data and place in a numpy array and list of classes
 def wine_loader(f):
     file = open(f)
@@ -29,7 +37,11 @@ def iris_loader(f):
         instances = np.append(instances,features)
         names.append(name)
     return instances, names
+#END OF Question(0)
 
+
+
+#Begin of Question(1)
 #fill up the bins with respects to the data to the data
 def fillbins(bins, data):
     bin_count = [0]*len(bins)
@@ -40,9 +52,6 @@ def fillbins(bins, data):
                 bin_count[j] += 1
             elif(j == (len(bins)-2) and data[i] >= bins[j+1]):
                 bin_count[j+1] +=1
-
-
-
     return bin_count
 
 #implementation of histograms
@@ -79,10 +88,53 @@ def histogram(numbins, data, feature_name ):
     plt.xticks(inds, X, rotation = 'vertical')
     plt.legend(handles=[setosa, versicolour, virginica])
     f.show()
+#End of Question(1)
 
+#End of Question(2.1)
+def mean(x):
+    m = 0;
+    for i in range(len(x)):
+        m += x[i]
+    return(m/len(x))
 
+def correlation(x,y):
 
+    x_bar = mean(x)
+    y_bar = mean(y)
+    #print("x_bar "+ str(x_bar) + " y_bar " + str(y_bar))
 
+    num = 0.0
+    den1 = 0.0
+    den2 = 0.0
+
+    for i in range(len(x)):
+        num += (x[i]-x_bar)*(y[i]-y_bar)
+        den1 += ((x[i]-x_bar)**2)
+        den2 += ((y[i]-y_bar)**2)
+
+    return( num /((den1*den2) **.5))
+
+def fill_correlation_matrix(data):
+    corr = np.array([])
+    for i in range(np.size(data,1)):
+        for j in range(np.size(data,1) ):
+            if(i == j):
+                corr = np.append(corr, 1 )
+            else:
+                n = correlation(data[:,i],data[:,j])
+                print("correlation betweeen " +str(i) + " and " +str(j) + " is " + str(n))
+                corr = np.append(corr,n)
+    corr = corr.reshape(13,13)
+    print(corr)
+
+    mask = np.zeros_like(corr)
+    mask[np.triu_indices_from(mask)] = True
+    plt.title("Correlation in Wine features ")
+    with sns.axes_style("white"):
+        ax = sns.heatmap(corr, mask = mask, vmax = 1, square = True, cbar_kws = {"shrink":.5}, cmap="YlGnBu")
+        plt.show()
+
+#e
 if __name__ == '__main__':
 
 
@@ -91,10 +143,13 @@ if __name__ == '__main__':
     iris_data = iris_data.reshape(150, 4)
     wine_data = wine_data.reshape(178, 13)
 
+
+    #print(correlation(iris_data[:,0],iris_data[:,1]))
+    fill_correlation_matrix(wine_data)
     #print(iris_data)
     #print(iris_data[0:50,0])
 
-    histogram(100,wine_data[0:178,2], 'Ash' )
+    #histogram(100,wine_data[0:178,2], 'Ash' )
 
     # g = plt.figure(2)
     # plt.ylabel('Ash')
@@ -103,8 +158,5 @@ if __name__ == '__main__':
     # plt.boxplot(sepal_data, labels = ('class 1','class 2','class 3'))
     # g.show()
     #
+
     raw_input()
-
-
-    #plt.plot(iris_data[1])
-    #plt.show()
