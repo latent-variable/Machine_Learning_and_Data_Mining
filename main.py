@@ -134,7 +134,80 @@ def fill_correlation_matrix(data):
         ax = sns.heatmap(corr, mask = mask, vmax = 1, square = True, cbar_kws = {"shrink":.5}, cmap="YlGnBu")
         plt.show()
 
-#e
+#end of Question(2.1)
+
+
+#Begin of Question(2.2)
+def scatterplots(data, data_class):
+    c = np.full((50,1),50)
+    c = np.append(c, np.full((50,1),100) )
+    c = np.append(c, np.full((50,1),150) )
+
+    x = data[:,2]
+    y = data[:,3]
+    plt.xlabel('petal lengthh')
+    plt.ylabel('petal width')
+    plt.title('purple = Setosa, green = Versicolour, yellow = Virginica' )
+    #plt.legend(handles=[x,y])
+    plt.scatter(x,y, s = 40, c = c)
+    plt.show()
+
+#End of  Question(2.2)
+
+#Begin of  Question(2.3)
+def distance(x,y,p):
+    distance = 0;
+    for i in range(len(x)):
+        distance = distance + (x[i] -y[i])**2
+    if(p==1):
+        return(distance)
+    if(p == 2):
+        return((distance)**(.5))
+
+
+def fill_distance_map(data, p):
+    s = len(data)
+    heatmap = np.zeros((s,s))
+    print(heatmap)
+    for i in range(s):
+        for j in range(s):
+            heatmap[i][j] = distance(data[i],data[j],p)
+    print(heatmap)
+
+
+    plt.title("Distance heatmap for the Wine Dataset unsing p = " + str(p))
+    with sns.axes_style("white"):
+        ax = sns.heatmap(heatmap, square = True, cbar_kws = {"shrink":.5})
+        plt.show()
+
+#End of  Question(2.3)
+
+#Begin of  Question(2.4)
+def nearest_class(data, data_class, p):
+    s = len(data)
+    labels = np.zeros((s))
+    dist = 1000000.0
+    point = 0.0
+    count = 0.0
+    for j in range(s):
+        for k in range(s):
+            if(j!=k):
+                temp = distance(data[j],data[k],p)
+                if ( temp < dist):
+                    dist = temp
+                    point = k
+        if data_class[point] == data_class[j]:
+            labels[j] = 1
+            count +=1
+        else:
+            labels[j] = 0
+
+    print(count/s)
+    print(labels)
+
+#End of  Question(2.4)
+
+
 if __name__ == '__main__':
 
 
@@ -143,9 +216,13 @@ if __name__ == '__main__':
     iris_data = iris_data.reshape(150, 4)
     wine_data = wine_data.reshape(178, 13)
 
+    nearest_class(iris_data, iris_class, 2)
+    #fill_distance_map(wine_data,2)
 
-    #print(correlation(iris_data[:,0],iris_data[:,1]))
-    fill_correlation_matrix(wine_data)
+    #scatterplots(iris_data, iris_class)
+
+    #print(correlation(iris_data[:,0],iris_data[:,0]))
+    #fill_correlation_matrix(wine_data)
     #print(iris_data)
     #print(iris_data[0:50,0])
 
